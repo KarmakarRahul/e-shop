@@ -6,14 +6,14 @@ const router = require('./route.js')
 const PORT = process.env.PORT || 8080
 const connectDB = require('./database.js')
 //middlewares
-app.use(express.json());
+app.use(express.json())
 const corsOption = {
     origin: [process.env.FRONTEND_BASE_URL],
-    Credential: true
+    Credential: true,
 }
 app.use(cors(corsOption))
-app.use('/api/v1', router);
-connectDB();
+app.use('/api/v1', router)
+connectDB()
 
 app.get('/', (req, res) => {
     res.json({
