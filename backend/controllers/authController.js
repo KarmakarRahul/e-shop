@@ -2,7 +2,6 @@ const UserDto = require('../Dtos/userDto.js')
 const HashService = require('../services/hashService.js')
 const UserService = require('../services/userService.js')
 const TokenService = require('../services/tokenService.js')
-const hashService = require('../services/hashService.js')
 const checkFields = ({ email, name, password }, checkName = false) => {
     const errors = {}
 
@@ -15,6 +14,41 @@ const checkFields = ({ email, name, password }, checkName = false) => {
     if (checkName === true && (!name || name.trim() === '')) {
         errors.name = 'Name is required.'
     }
+    return Object.keys(errors).length === 0 ? null : errors
+}
+// optional
+const passwordPoliciesCheck = (password) => {
+    const regexUpperCase = /[A-Z]/
+    const regexLowerCase = /[a-z]/
+    const regexNumber = /\d/
+    const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/
+
+    const hasUpperCase = regexUpperCase.test(password)
+    const hasLowerCase = regexLowerCase.test(password)
+    const hasNumber = regexNumber.test(password)
+    const hasSpecialChar = regexSpecialChar.test(password)
+
+    const errors = {}
+
+    if (!hasUpperCase) {
+        errors.uppercase =
+            'Password must contain at least one uppercase letter.'
+    }
+
+    if (!hasLowerCase) {
+        errors.lowercase =
+            'Password must contain at least one lowercase letter.'
+    }
+
+    if (!hasNumber) {
+        errors.number = 'Password must contain at least one number.'
+    }
+
+    if (!hasSpecialChar) {
+        errors.specialChar =
+            'Password must contain at least one special character.'
+    }
+
     return Object.keys(errors).length === 0 ? null : errors
 }
 class AuthController {
@@ -89,7 +123,7 @@ class AuthController {
             })
         }
         // check password matching
-        const isPasswordMatch = await hashService.comparePassword(
+        const isPasswordMatch = await HashService.comparePassword(
             password,
             user.password
         )
